@@ -1,11 +1,10 @@
 # window.py
 #
-# Copyright 2020 brombinmirko <send@mirko.pm>
+# Copyright 2022 brombinmirko <send@mirko.pm>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# the Free Software Foundation, in version 3 of the License.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,6 +44,7 @@ from bottles.dialogs.crash import CrashReportDialog
 from bottles.dialogs.generic import AboutDialog, SourceDialog
 from bottles.dialogs.onboard import OnboardDialog
 from bottles.dialogs.journal import JournalDialog
+from bottles.dialogs.depscheck import DependenciesCheckDialog
 
 logging = Logger()
 
@@ -82,6 +82,7 @@ class MainWindow(Adw.ApplicationWindow):
     def __init__(self, arg_exe, arg_bottle, arg_passed, **kwargs):
         super().__init__(**kwargs)
 
+        self.disable_onboard = False
         self.utils_conn = ConnectionUtils(self)
         self.manager = None
         self.arg_bottle = arg_bottle
@@ -237,6 +238,7 @@ class MainWindow(Adw.ApplicationWindow):
             mng = Manager(window=window, repo_fn_update=repo_fn_update)
             return mng
 
+        self.check_core_deps()
         self.show_loading_view()
         repo_fn_update = self.page_loading.add_fetched if self.utils_conn.check_connection() else None
         RunAsync(get_manager, callback=set_manager, window=self, repo_fn_update=repo_fn_update)
@@ -292,6 +294,9 @@ class MainWindow(Adw.ApplicationWindow):
         self.stack_main.set_visible_child_name("page_loading")
 
     def show_onboard_view(self, widget=False):
+        if self.disable_onboard:
+            return
+
         onboard_window = OnboardDialog(self)
         onboard_window.present()
 
@@ -354,6 +359,11 @@ class MainWindow(Adw.ApplicationWindow):
         toast = Adw.Toast.new(message)
         toast.props.timeout = timeout
         self.toasts.add_toast(toast)
+
+    def check_core_deps(self):
+        if "FLATPAK_ID" not in os.environ and not HealthChecker().has_core_deps():
+            self.disable_onboard = True
+            DependenciesCheckDialog(self).present()
 
     @staticmethod
     def proper_close():

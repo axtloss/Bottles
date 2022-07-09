@@ -1,11 +1,10 @@
 # preferences.py
 #
-# Copyright 2020 brombinmirko <send@mirko.pm>
+# Copyright 2022 brombinmirko <send@mirko.pm>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# the Free Software Foundation, in version 3 of the License.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -41,6 +40,7 @@ class PreferencesWindow(Adw.PreferencesWindow):
     switch_update_date = Gtk.Template.Child()
     switch_steam_programs = Gtk.Template.Child()
     switch_epic_games = Gtk.Template.Child()
+    switch_ubisoft_connect = Gtk.Template.Child()
     list_winebridge = Gtk.Template.Child()
     list_runtimes = Gtk.Template.Child()
     list_runners = Gtk.Template.Child()
@@ -87,6 +87,7 @@ class PreferencesWindow(Adw.PreferencesWindow):
         self.switch_update_date.set_active(self.settings.get_boolean("update-date"))
         self.switch_steam_programs.set_active(self.settings.get_boolean("steam-programs"))
         self.switch_epic_games.set_active(self.settings.get_boolean("epic-games"))
+        self.switch_ubisoft_connect.set_active(self.settings.get_boolean("ubisoft-connect"))
         self.populate_runtimes_list()
         self.populate_winebridge_list()
         self.populate_runners_list()
@@ -106,6 +107,7 @@ class PreferencesWindow(Adw.PreferencesWindow):
         self.switch_update_date.connect('state-set', self.__toggle_update_date)
         self.switch_steam_programs.connect('state-set', self.__toggle_steam_programs)
         self.switch_epic_games.connect('state-set', self.__toggle_epic_games)
+        self.switch_ubisoft_connect.connect('state-set', self.__toggle_ubisoft_connect)
         self.btn_bottles_path.connect('clicked', self.__choose_bottles_path)
         self.btn_bottles_path_reset.connect('clicked', self.__reset_bottles_path)
 
@@ -124,6 +126,9 @@ Visit https://docs.usebottles.com/flatpak/cant-enable-steam-proton-manager"))
 
     def __toggle_epic_games(self, widget, state):
         self.settings.set_boolean("epic-games", state)
+
+    def __toggle_ubisoft_connect(self, widget, state):
+        self.settings.set_boolean("ubisoft-connect", state)
 
     def __toggle_notify(self, widget, state):
         self.settings.set_boolean("notifications", state)

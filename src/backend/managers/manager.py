@@ -1,11 +1,10 @@
 # manager.py
 #
-# Copyright 2020 brombinmirko <send@mirko.pm>
+# Copyright 2022 brombinmirko <send@mirko.pm>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# the Free Software Foundation, in version 3 of the License.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -608,6 +607,7 @@ class Manager:
             "*err*",
             "_*",
             "start",
+            "OriginEr",
             "*website*",
             "*web site*",
             "*user_manual*"
@@ -735,22 +735,32 @@ class Manager:
                 conf_file_yaml["Latest_Executables"] = []
 
             # Migrate old programs to [id] and [name]
-            _temp = conf_file_yaml.get("External_Programs").copy()
+            _temp = {}
             _changed = False
-            for k, v in _temp.items():
+            for k, v in conf_file_yaml.get("External_Programs").items():
                 _uuid = str(uuid.uuid4())
+                _k = k
+                _v = v
+                try:
+                    uuid.UUID(k)
+                except ValueError:
+                    _k = _uuid
+                    _changed = True
                 if "id" not in v:
-                    _temp[k]["id"] = _uuid
+                    _v["id"] = _uuid
                     _changed = True
                 if "name" not in v:
-                    _temp[k]["name"] = _temp[k]["executable"].split(".")[0]
+                    _v["name"] = _v["executable"].split(".")[0]
+                    _changed = True
+                _temp[_k] = _v
+
             if _changed:
                 self.update_config(
                     config=conf_file_yaml,
                     key="External_Programs",
                     value=_temp
                 )
-                conf_file_yaml["External_Programs"] = _temp
+            conf_file_yaml["External_Programs"] = _temp
 
             miss_keys = Samples.config.keys() - conf_file_yaml.keys()
             for key in miss_keys:
@@ -816,11 +826,11 @@ class Manager:
             self,
             config: dict,
             key: str,
-            value: str,
+            value: Any,
             scope: str = "",
             remove: bool = False,
             fallback: bool = False
-    ) -> dict:
+    ) -> Union[Result, dict]:
         """
         Update parameters in bottle config. Use the scope argument to
         update the parameters in the specified scope (e.g. Parameters).

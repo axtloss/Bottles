@@ -1,11 +1,10 @@
 # library.py
 #
-# Copyright 2020 brombinmirko <send@mirko.pm>
+# Copyright 2022 brombinmirko <send@mirko.pm>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# the Free Software Foundation, in version 3 of the License.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +38,7 @@ class LibraryEntry(Gtk.Box):
     btn_remove = Gtk.Template.Child()
     label_name = Gtk.Template.Child()
     label_bottle = Gtk.Template.Child()
+    label_no_cover = Gtk.Template.Child()
     img_cover = Gtk.Template.Child()
     img_icon = Gtk.Template.Child()
 
@@ -68,6 +68,13 @@ class LibraryEntry(Gtk.Box):
                 self.img_icon.set_from_icon_name("com.usebottles.bottles-program")
             self.img_icon.set_pixel_size(24)
             self.img_icon.set_visible(True)
+
+        # TODO:
+        # is has cover:
+            # set img_cover visible
+        # else
+            # set label_no_cover visible
+        self.label_no_cover.set_visible(True)
 
         self.btn_run.connect("clicked", self.run_executable)
         self.btn_launch_steam.connect("clicked", self.run_steam)
