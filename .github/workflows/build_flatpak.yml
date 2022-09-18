@@ -14,20 +14,12 @@ jobs:
     name: "build-packages"
     runs-on: ubuntu-latest
     container:
-      image: fedora:36
+      image: bilelmoussaoui/flatpak-github-actions:gnome-42
       options: --privileged
     steps:
     - uses: actions/checkout@v2
+    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
         bundle: bottles.flatpak
         manifest-path: com.usebottles.bottles.dev.yml
         cache-key: flatpak-builder-${{ github.sha }}
-    - name: install flatpak-builder
-      run: |
-        sudo dnf -y install flatpak flatpak-builder
-        flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-    - name: build flatpak
-      run: |
-        mkdir build-dir
-        flatpak-builder run --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
-        flatpak-builder run build-bundle build-repo --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bottles.flatpak com.usebottles.bottles
