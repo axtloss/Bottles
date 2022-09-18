@@ -24,6 +24,7 @@ jobs:
         cache-key: flatpak-builder-${{ github.sha }}
     - name: install flatpak-builder
       run: |
+        sudo dnf install flatpak
         flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
         flatpak install org.flatpak.Builder
     - name: build flatpak
