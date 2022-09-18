@@ -1,0 +1,26 @@
+on:
+  push:
+    branches: [main]
+  pull_request:
+name: Build Flatpak
+jobs:
+  flatpak:
+    name: "build-packages"
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:36
+      options: --privileged
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        bundle: bottles.flatpak
+        manifest-path: com.usebottles.bottles.dev.yml
+        cache-key: flatpak-builder-${{ github.sha }}
+    - name: install flatpak-builder
+      run: |
+        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+        flatpak install org.flatpak.Builder
+    - name: build flatpak
+      run: |
+        flatpak run org.flatpak.Builder --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
+        flatpak run org.flatpak.Builder build-repo --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bottles.flatpak com.usebottles.bottles
