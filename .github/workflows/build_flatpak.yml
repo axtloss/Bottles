@@ -25,8 +25,8 @@ jobs:
     - name: install flatpak-builder
       run: |
         sudo dnf -y install flatpak
-        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-        flatpak install org.flatpak.Builder
+        flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+        flatpak install -y org.flatpak.Builder
     - name: build flatpak
       run: |
         flatpak run org.flatpak.Builder --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
