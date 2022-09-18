@@ -24,10 +24,9 @@ jobs:
         cache-key: flatpak-builder-${{ github.sha }}
     - name: install flatpak-builder
       run: |
-        sudo dnf -y install flatpak
+        sudo dnf -y install flatpak flatpak-builder
         flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-        flatpak install -y org.flatpak.Builder
     - name: build flatpak
       run: |
-        flatpak run org.flatpak.Builder --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
-        flatpak run org.flatpak.Builder build-repo --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bottles.flatpak com.usebottles.bottles
+        flatpak-builder run --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
+        flatpak-builder run build-bundle build-repo --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bottles.flatpak com.usebottles.bottles
