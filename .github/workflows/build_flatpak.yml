@@ -18,6 +18,9 @@ jobs:
       options: --privileged
     steps:
     - uses: actions/checkout@v2
+    - name: remove url
+      run: |
+        sed '/<url .*/d' -i data/com.usebottles.bottles.appdata.xml.in
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
         bundle: bottles.flatpak
