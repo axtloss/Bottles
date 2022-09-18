@@ -28,5 +28,6 @@ jobs:
         flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
     - name: build flatpak
       run: |
+        mkdir build-dir
         flatpak-builder run --install-deps-from=flathub --repo=build-repo --force-clean build-dir com.usebottles.bottles.dev.yml
         flatpak-builder run build-bundle build-repo --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo bottles.flatpak com.usebottles.bottles
